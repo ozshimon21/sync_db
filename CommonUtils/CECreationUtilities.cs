@@ -15,7 +15,7 @@ namespace CommonUtils
         public static string[] SyncAdapterTablePrimaryKeys = new string[] { "order_id", "order_Details_id" };
         public static int TombstoneAgingInHours = 10;
         public static string SqlSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlSyncService/";
-        public static string CeSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlCeSyncService/";
+        public static string SqlCeSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlCeSyncService/";
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace CommonUtils
     /// <summary>
     /// Utility class that holds information about a single CE client database
     /// </summary>
-    public class CEDatabase
+    public class SqlDatabase
     {
         string dbName;
         SqlCeConnection connection;

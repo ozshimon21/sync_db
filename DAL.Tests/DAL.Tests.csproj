@@ -69,6 +69,10 @@
     <Compile Include="SqlServerCeDatabaseHandlerTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+      <Project>{20ed40e9-7af3-46d9-9599-893550c136e8}</Project>
+      <Name>CommonUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{3dc3fd1a-cb59-4ac3-8de6-6f737e13f9db}</Project>
       <Name>DAL</Name>

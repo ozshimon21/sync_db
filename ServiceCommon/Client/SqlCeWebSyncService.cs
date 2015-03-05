@@ -26,7 +26,9 @@ namespace DbService.Client
         protected override RelationalSyncProvider ConfigureProvider(string scopeName, string clientStringConn)
         {
             var helper = new DbServiceClientHandler();
-            SqlCeConnection clientConn = new SqlCeConnection(clientStringConn);
+
+            SqlDatabase db = new SqlDatabase {Location = clientStringConn};
+            SqlCeConnection clientConn = new SqlCeConnection(db.Connection.ConnectionString);
             dbProvider = helper.ConfigureCeSyncProvider(scopeName, clientConn);
 
             return dbProvider;
