@@ -12,7 +12,11 @@ namespace DbService.Interfaces
 
         [OperationContract]
         [FaultContract(typeof(WebSyncFaultException))]
-        DbSyncScopeDescription GetScopeDescription();
+        void DeleteScopeDescription(string scopeName);
+
+        [OperationContract]
+        [FaultContract(typeof(WebSyncFaultException))]
+        DbSyncScopeDescription GetScopeDescription(string scopeName);
 
         [OperationContract]
         [FaultContract(typeof(WebSyncFaultException))]

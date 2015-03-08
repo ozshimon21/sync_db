@@ -14,6 +14,7 @@ namespace DbService.Common
         protected string scopeName;
         protected DirectoryInfo localBatchingDirectory;
         protected bool disposed = false;
+        protected EndpointAddress ClientServiceEndpoint { get; set; }
 
         //Represents either the SQL server host name or the CE database file name. Sql database name
         //is always peer1
@@ -47,8 +48,9 @@ namespace DbService.Common
             }
         }
 
-        public RelationalProviderProxy(string scopeName, string hostName)
+        public RelationalProviderProxy(string clientEndpoint,string scopeName, string hostName)
         {
+            ClientServiceEndpoint = new EndpointAddress(clientEndpoint); 
             this.scopeName = scopeName;
             
             this.hostName = hostName;

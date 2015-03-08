@@ -10,16 +10,13 @@ namespace DbService.Client
     public class SqlCeSyncProviderProxy : RelationalProviderProxy
     {
         private ISqlCeSyncContract m_clientProxy;
-        private DbSyncScopeDescription m_scopeDescription;
-        private EndpointAddress ClientServiceEndpoint { get; set; }
-    
-
+        //private DbSyncScopeDescription m_scopeDescription;
+        
         public SqlCeSyncProviderProxy(string clientEndpoint, string scopeName, string ceDatabaseName):
-            base(scopeName, ceDatabaseName)
+            base(clientEndpoint,scopeName, ceDatabaseName)
         {
-            ClientServiceEndpoint = new EndpointAddress(clientEndpoint);           
+                      
         }
-
 
         protected override void CreateProxy()
         {
@@ -28,10 +25,11 @@ namespace DbService.Client
                                             ReaderQuotas = {MaxArrayLength = 100000},
                                             MaxReceivedMessageSize = 10485760
                                     };
-            ChannelFactory<ISqlCeSyncContract> factory = new ChannelFactory<ISqlCeSyncContract>(binding, ClientServiceEndpoint);
+            ChannelFactory<ISqlCeSyncContract> factory = new ChannelFactory<ISqlCeSyncContract>(binding, ClientServiceEndpoint );
             base.proxy = factory.CreateChannel();
             m_clientProxy = base.proxy as ISqlCeSyncContract;
         }
+
 
 
         public void CreateScopeDescription(DbSyncScopeDescription scopeDescription)
@@ -39,9 +37,16 @@ namespace DbService.Client
             m_clientProxy.CreateScopeDescription(scopeDescription);
         }
 
-        public DbSyncScopeDescription GetScopeDescription()
+        public void DeleteScopeDescription(String scope)
         {
-            return m_clientProxy.GetScopeDescription();
+            m_clientProxy.DeleteScopeDescription(scope);
+        }
+
+
+
+        public DbSyncScopeDescription GetScopeDescription(string scope)
+        {
+            return m_clientProxy.GetScopeDescription(scope);
         }
 
         public bool NeedsScope()

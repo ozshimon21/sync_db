@@ -19,7 +19,7 @@ namespace DbService.Client
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SqlCeWebSyncService : RelationalWebSyncService, ISqlCeSyncContract
     {
-        SqlCeSyncProvider dbProvider;      
+        SqlCeSyncProvider dbProvider;
 
         #region ISqlSyncContract Members
 
@@ -27,8 +27,7 @@ namespace DbService.Client
         {
             var helper = new DbServiceClientHandler();
 
-            SqlDatabase db = new SqlDatabase {Location = clientStringConn};
-            SqlCeConnection clientConn = new SqlCeConnection(db.Connection.ConnectionString);
+            SqlCeConnection clientConn = new SqlCeConnection(clientStringConn);
             dbProvider = helper.ConfigureCeSyncProvider(scopeName, clientConn);
 
             return dbProvider;
@@ -44,23 +43,34 @@ namespace DbService.Client
             clientProvision.Apply();
         }
 
-        public DbSyncScopeDescription GetScopeDescription()
+        public void DeleteScopeDescription(String scopeName)
         {
-            //Log("GetSchema: {0}", this.peerProvider.Connection.ConnectionString);
+            // create CE provisioning object based on the ProductsScope
 
-            var scopeDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForScope(SyncUtils.ScopeName, dbProvider.Connection as SqlCeConnection);
+            SqlCeSyncScopeDeprovisioning clientDeprovision =
+                    new SqlCeSyncScopeDeprovisioning(dbProvider.Connection as SqlCeConnection);
+
+            // starts the provisioning process
+            clientDeprovision.DeprovisionScope(scopeName);
+        }
+
+        public DbSyncScopeDescription GetScopeDescription(string ScopeName)
+        {
+            Log("GetSchema: {0}", this.peerProvider.Connection.ConnectionString);
+
+            var scopeDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForScope(ScopeName, dbProvider.Connection as SqlCeConnection);
             return scopeDesc;
         }
 
         public bool NeedsScope()
         {
-           // Log("NeedsSchema: {0}", this.peerProvider.Connection.ConnectionString);
+            Log("NeedsSchema: {0}", this.peerProvider.Connection.ConnectionString);
 
             SqlCeSyncScopeProvisioning prov = null;
             if (dbProvider == null || dbProvider.Connection == null) return false;
-            
-            prov = new SqlCeSyncScopeProvisioning((SqlCeConnection)this.dbProvider.Connection);
-            
+
+            prov = new SqlCeSyncScopeProvisioning((SqlCeConnection)dbProvider.Connection);
+
             return !prov.ScopeExists(dbProvider.ScopeName);
         }
 

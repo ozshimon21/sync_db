@@ -9,7 +9,8 @@ namespace DbService.Server
     public class SqlSyncProviderProxy : RelationalProviderProxy
     {
         ISqlSyncContract dbProxy;
-        public SqlSyncProviderProxy(string scopeName, string hostName): base(scopeName, hostName)
+        public SqlSyncProviderProxy(string serverEndpoint, string scopeName, string hostName)
+            : base(serverEndpoint,scopeName, hostName)
         { }
 
         protected override void CreateProxy()

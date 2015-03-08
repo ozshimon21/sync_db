@@ -57,14 +57,20 @@ namespace CommonUtils
 
         public SqlCeConnection Connection
         {
+            //string conn = @"DataSource='C:\\KaronDB.sdf'; Password=''";
             get 
             {
                 if (connection == null)
                 {
-                    connection = new SqlCeConnection("Data Source=\"" + dbLocation + "\"");
-                }
+                    connection = new SqlCeConnection(String.Format(@"DataSource='{0}'; Password='{1}'", dbLocation,string.Empty));
+                } 
                 return connection;
             }
+        }
+
+        public string ConnectionString
+        {
+            get { return Connection.ConnectionString; }
         }
     }
 }
