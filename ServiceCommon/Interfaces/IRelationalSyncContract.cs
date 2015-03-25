@@ -15,11 +15,12 @@ namespace DbService.Interfaces
     [ServiceKnownType(typeof(SyncBatchParameters))]
     [ServiceKnownType(typeof(GetChangesParameters))]
     [ServiceKnownType(typeof(RelationalSyncProvider))]
+    [ServiceKnownType(typeof(ClientData))]
     public interface IRelationalSyncContract
     {
         
         [OperationContract(IsInitiating=true)]
-        bool Initialize(string scopeName, string hostName);
+        ClientData Initialize(string scopeName, string hostName);
 
         [OperationContract]
         void BeginSession(SyncProviderPosition position);
@@ -47,6 +48,13 @@ namespace DbService.Interfaces
 
         [OperationContract(IsTerminating= true)]
         void Cleanup();
+    }
+
+    [DataContract]
+    public class ClientData
+    {
+        [DataMember]
+        public RelationalSyncProvider ClientProvider;
     }
 
     [DataContract]

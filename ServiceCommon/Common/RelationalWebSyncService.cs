@@ -18,12 +18,15 @@ namespace DbService.Common
 
 
 
-        public bool Initialize(string scopeName, string hostName)
+        public ClientData Initialize(string scopeName, string hostName)
         {
             this.peerProvider = this.ConfigureProvider(scopeName, hostName);
             this.batchIdToFileMapper = new Dictionary<string, string>();
 
-            return this.peerProvider != null;
+
+            return new ClientData {ClientProvider = peerProvider};
+
+            //return this.peerProvider != null;
 
             //return peerProvider;
         }
