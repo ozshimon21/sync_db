@@ -13,7 +13,7 @@ namespace DbService.Server
             : base(serverEndpoint,scopeName, hostName)
         { }
 
-        protected override void CreateProxy()
+        public override void CreateProxy()
         {
             WSHttpBinding binding = new WSHttpBinding
                                     {

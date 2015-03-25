@@ -22,7 +22,7 @@ namespace DbService.Tests
         private const string DATABASE_LOCATION = @"C:\KaronDB.sdf";
         private const string TABLE = "Stations";
         private const string SCOPE_NAME = "StationsScope";
-        private const string SERVER_CONN = "Data Source=localhost; Initial Catalog=SyncDB; Integrated Security=True";
+        private const string SERVER_CONN = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
 
 
         private SqlDatabase clientDatabase;
@@ -48,7 +48,7 @@ namespace DbService.Tests
         public void NeedScopeTest() 
         {
             var result = m_clientProvider.NeedsScope();
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -76,6 +76,7 @@ namespace DbService.Tests
             try
             {
                 m_clientProvider.DeleteScopeDescription(SCOPE_NAME);
+                
             }
             catch (Exception ex)
             {

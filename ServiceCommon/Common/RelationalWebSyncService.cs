@@ -16,10 +16,14 @@ namespace DbService.Common
         protected Dictionary<string, string> batchIdToFileMapper;
         int batchCount = 0;
 
+
+
         public void Initialize(string scopeName, string hostName)
         {
             this.peerProvider = this.ConfigureProvider(scopeName, hostName);
             this.batchIdToFileMapper = new Dictionary<string, string>();
+
+           // return peerProvider;
         }
 
         public void Cleanup()

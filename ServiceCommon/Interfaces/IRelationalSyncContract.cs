@@ -14,8 +14,10 @@ namespace DbService.Interfaces
     [ServiceKnownType(typeof(WebSyncFaultException))]
     [ServiceKnownType(typeof(SyncBatchParameters))]
     [ServiceKnownType(typeof(GetChangesParameters))]
+    [ServiceKnownType(typeof(RelationalSyncProvider))]
     public interface IRelationalSyncContract
     {
+        
         [OperationContract(IsInitiating=true)]
         void Initialize(string scopeName, string hostName);
 

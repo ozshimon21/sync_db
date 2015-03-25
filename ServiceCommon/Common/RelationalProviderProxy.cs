@@ -48,21 +48,19 @@ namespace DbService.Common
             }
         }
 
-        public RelationalProviderProxy(string clientEndpoint,string scopeName, string hostName)
+        protected RelationalProviderProxy(string clientEndpoint,string scopeName, string hostName)
         {
             ClientServiceEndpoint = new EndpointAddress(clientEndpoint); 
-            this.scopeName = scopeName;
-            
+            this.scopeName = scopeName;           
             this.hostName = hostName;
-            this.CreateProxy();            
-            this.proxy.Initialize(scopeName, hostName);
+            //this.CreateProxy();            
+            //this.proxy.Initialize(scopeName, hostName);
         }
 
         public override void BeginSession(SyncProviderPosition position, SyncSessionContext syncSessionContext)
         {
             this.proxy.BeginSession(position);
         }
-
 
         public override void EndSession(SyncSessionContext syncSessionContext)
         {
@@ -208,7 +206,7 @@ namespace DbService.Common
             throw new NotImplementedException();
         }
 
-        protected abstract void CreateProxy();
+        public abstract void CreateProxy();
        
 
         ~RelationalProviderProxy()

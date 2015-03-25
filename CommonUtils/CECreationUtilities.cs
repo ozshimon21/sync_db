@@ -16,6 +16,7 @@ namespace CommonUtils
         public static int TombstoneAgingInHours = 10;
         public static string SqlSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlSyncService/";
         public static string SqlCeSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlCeSyncService/";
+        public static string SqlCeSyncServiceUriNetTcp = "net.tcp://localhost:8008/RelationalSyncContract/SqlCeSyncService/";
     }
 
     /// <summary>

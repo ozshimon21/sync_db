@@ -30,7 +30,14 @@ namespace DbService.Client
             SqlCeConnection clientConn = new SqlCeConnection(clientStringConn);
             dbProvider = helper.ConfigureCeSyncProvider(scopeName, clientConn);
 
+            dbProvider.ApplyChangeFailed += dbProvider_ApplyChangeFailed;
+
             return dbProvider;
+        }
+
+        void dbProvider_ApplyChangeFailed(object sender, DbApplyChangeFailedEventArgs e)
+        {
+            Log("dbProvider_ApplyChangeFailed: " + e.Error);
         }
 
         public void CreateScopeDescription(DbSyncScopeDescription scopeDescription)
@@ -39,8 +46,16 @@ namespace DbService.Client
             SqlCeSyncScopeProvisioning clientProvision =
                     new SqlCeSyncScopeProvisioning(dbProvider.Connection as SqlCeConnection, scopeDescription);
 
-            // starts the provisioning process
-            clientProvision.Apply();
+            try
+            {
+                clientProvision.Apply();
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
         }
 
         public void DeleteScopeDescription(String scopeName)
@@ -51,7 +66,8 @@ namespace DbService.Client
                     new SqlCeSyncScopeDeprovisioning(dbProvider.Connection as SqlCeConnection);
 
             // starts the provisioning process
-            clientDeprovision.DeprovisionScope(scopeName);
+            //clientDeprovision.DeprovisionScope(scopeName);
+            clientDeprovision.DeprovisionStore();
         }
 
         public DbSyncScopeDescription GetScopeDescription(string ScopeName)
