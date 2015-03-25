@@ -23,19 +23,19 @@ namespace ServerConsole
             const string tableName = "Stations";
             const string tableName2 = "Flight";
 
-            const string stationscope = "StationScope2";
-            const string connectionStringServer = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
-            const string connectionStringClient = @"C:\KaronDB.sdf";
-            const string SqlCeSyncServiceUri = "http://localhost:8000/RelationalSyncContract/SqlCeSyncService/";
-            const string SqlCeSyncServiceUriNetTcp = "net.tcp://localhost:8008/RelationalSyncContract/SqlCeSyncService/";
+            const string STATIONSCOPE = "StationScope2";
+            const string CONNECTION_STRING_SERVER = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
+            const string CONNECTION_STRING_CLIENT = @"C:\KaronDB.sdf";
+            const string SQL_CE_SYNC_SERVICE_URI = "http://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService/";
+            const string SQL_CE_SYNC_SERVICE_URI_NET_TCP = "net.tcp://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService";
 
             
 
-            SqlConnection serverConn = new SqlConnection(connectionStringServer);
+            var serverConn = new SqlConnection(CONNECTION_STRING_SERVER);
             
-            DbSyncScopeDescription scopeDesc = new DbSyncScopeDescription(stationscope);          
-            DbSyncTableDescription tableDesc = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName, serverConn);
-            DbSyncTableDescription tableDesc2 = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName2, serverConn);
+            var scopeDesc = new DbSyncScopeDescription(STATIONSCOPE);          
+            var tableDesc = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName, serverConn);
+            var tableDesc2 = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName2, serverConn);
             scopeDesc.Tables.Add(tableDesc);
             scopeDesc.Tables.Add(tableDesc2);
 
@@ -47,7 +47,7 @@ namespace ServerConsole
             Console.WriteLine("Press any key");
             Console.ReadLine();
 
-            clientProxy = new SqlCeSyncProviderProxy(SqlCeSyncServiceUri, stationscope);
+            clientProxy = new SqlCeSyncProviderProxy(SQL_CE_SYNC_SERVICE_URI_NET_TCP, STATIONSCOPE);
             clientProxy.CreateProxy();
             var result =  clientProxy.NeedsScope();
 
@@ -62,11 +62,11 @@ namespace ServerConsole
 //            Console.ReadLine();
 
 
-            SqlSyncProvider localProvider = new SqlSyncProvider(stationscope, serverConn);
+            var localProvider = new SqlSyncProvider(STATIONSCOPE, serverConn);
 
-            SqlDatabase clientDB = new SqlDatabase {Location = connectionStringClient};
+            var clientDB = new SqlDatabase { Location = CONNECTION_STRING_CLIENT };
 
-            SqlCeSyncProvider remoteProvider = new SqlCeSyncProvider(stationscope,
+            var remoteProvider = new SqlCeSyncProvider(STATIONSCOPE,
                     new SqlCeConnection(clientDB.ConnectionString));
 
             localProvider.MemoryDataCacheSize = 1;
@@ -79,7 +79,7 @@ namespace ServerConsole
             remoteProvider.BatchSpooled += localProvider_BatchSpooled;
             remoteProvider.BatchApplied += localProvider_BatchApplied;
 
-            SyncOrchestrator orchestrator = new SyncOrchestrator
+            var orchestrator = new SyncOrchestrator
                                             {
                                                     LocalProvider = localProvider,
                                                     RemoteProvider = remoteProvider,
@@ -112,9 +112,9 @@ namespace ServerConsole
 
         private static string ReadTableWatermarks(Dictionary<string, ulong> dictionary)
         {
-            StringBuilder builder = new StringBuilder();
-            Dictionary<string, ulong> dictionaryClone = new Dictionary<string, ulong>(dictionary);
-            foreach (KeyValuePair<string, ulong> kvp in dictionaryClone)
+            var builder = new StringBuilder();
+            var dictionaryClone = new Dictionary<string, ulong>(dictionary);
+            foreach (var kvp in dictionaryClone)
             {
                 builder.Append(kvp.Key).Append(":").Append(kvp.Value).Append(",");
             }

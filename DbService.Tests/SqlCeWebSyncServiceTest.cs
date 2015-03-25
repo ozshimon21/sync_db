@@ -54,7 +54,7 @@ namespace DbService.Tests
         [TestMethod]
         public void CreateScopeDescriptionTest()
         {
-            DbSyncScopeDescription scopeDesc = new DbSyncScopeDescription(SCOPE_NAME);
+            var scopeDesc = new DbSyncScopeDescription(SCOPE_NAME);
             // get the description of the Products table from SyncDB dtabase
             var tableDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForTable(TABLE, clientDatabase.Connection);
             // add the table description to the sync scope definition

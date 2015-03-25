@@ -9,10 +9,10 @@ namespace DbService.Client
 {
     public class SqlCeSyncProviderProxy : RelationalProviderProxy
     {
-        private ISqlCeSyncContract m_clientProxy;
-        private RelationalSyncProvider m_clientProvider;
+        private ISqlCeSyncContract _clientProxy;
+        private RelationalSyncProvider _clientProvider;
 
-        private const string client_default_database_path = @"C:\KaronDB.sdf";
+        private const string CLIENT_DEFAULT_DATABASE_PATH = @"C:\KaronDB.sdf";
         
         public SqlCeSyncProviderProxy(string clientEndpoint, string scopeName, string ceDatabaseName):
             base(clientEndpoint,scopeName, ceDatabaseName)
@@ -21,34 +21,35 @@ namespace DbService.Client
         }
 
         public SqlCeSyncProviderProxy(string clientEndpoint, string scopeName) :
-            base(clientEndpoint, scopeName, client_default_database_path)
+            base(clientEndpoint, scopeName, CLIENT_DEFAULT_DATABASE_PATH)
         {
             
         }
 
         public override void CreateProxy()
         {
-            WSHttpBinding binding = new WSHttpBinding
-                                    {
-                                            ReaderQuotas = {MaxArrayLength = 100000},
-                                            MaxReceivedMessageSize = 10485760,                                          
-                                    };
+//            WSHttpBinding binding = new WSHttpBinding
+//                                    {
+//                                            ReaderQuotas = {MaxArrayLength = 100000},
+//                                            MaxReceivedMessageSize = 10485760,                                          
+//                                    };
 
-            NetTcpBinding netTcpBinding = new NetTcpBinding
+            var netTcpBinding = new NetTcpBinding
                                           {
                                               ReaderQuotas = { MaxArrayLength = 100000 },
                                               MaxReceivedMessageSize = 10485760,
+                                              Security = new NetTcpSecurity() { Mode = SecurityMode.None}
                                           };
 
-         
-            ChannelFactory<ISqlCeSyncContract> factory = new ChannelFactory<ISqlCeSyncContract>(binding, ClientServiceEndpoint);
+
+            var factory = new ChannelFactory<ISqlCeSyncContract>(netTcpBinding, ClientServiceEndpoint);
             base.proxy = factory.CreateChannel();
-            m_clientProxy = base.proxy as ISqlCeSyncContract;
+            _clientProxy = base.proxy as ISqlCeSyncContract;
 
 
-            SqlDatabase clientDatabase = new SqlDatabase { Location = hostName };
+            var clientDatabase = new SqlDatabase { Location = hostName };
 
-            this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
+            _clientProvider = this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
         }
 
 
@@ -56,24 +57,24 @@ namespace DbService.Client
 
         public void CreateScopeDescription(DbSyncScopeDescription scopeDescription)
         {
-            m_clientProxy.CreateScopeDescription(scopeDescription);
+            _clientProxy.CreateScopeDescription(scopeDescription);
         }
 
         public void DeleteScopeDescription(String scope)
         {
-            m_clientProxy.DeleteScopeDescription(scope);
+            _clientProxy.DeleteScopeDescription(scope);
         }
 
 
 
         public DbSyncScopeDescription GetScopeDescription(string scope)
         {
-            return m_clientProxy.GetScopeDescription(scope);
+            return _clientProxy.GetScopeDescription(scope);
         }
 
         public bool NeedsScope()
         {
-            return m_clientProxy.NeedsScope();
+            return _clientProxy.NeedsScope();
         }
     }
 }
