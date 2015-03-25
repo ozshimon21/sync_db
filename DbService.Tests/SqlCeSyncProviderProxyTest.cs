@@ -60,7 +60,8 @@ namespace DbService.Tests
 
                if (result == false) return;
 
-                 
+                var provider = _clientProxy.ClientProvider;
+
 
             }
             catch (Exception ex)

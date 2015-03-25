@@ -18,12 +18,14 @@ namespace DbService.Common
 
 
 
-        public RelationalSyncProvider Initialize(string scopeName, string hostName)
+        public bool Initialize(string scopeName, string hostName)
         {
             this.peerProvider = this.ConfigureProvider(scopeName, hostName);
             this.batchIdToFileMapper = new Dictionary<string, string>();
 
-            return peerProvider;
+            return this.peerProvider != null;
+
+            //return peerProvider;
         }
 
         public void Cleanup()

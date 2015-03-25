@@ -19,7 +19,7 @@ namespace DbService.Interfaces
     {
         
         [OperationContract(IsInitiating=true)]
-        RelationalSyncProvider Initialize(string scopeName, string hostName);
+        bool Initialize(string scopeName, string hostName);
 
         [OperationContract]
         void BeginSession(SyncProviderPosition position);

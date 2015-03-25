@@ -10,7 +10,11 @@ namespace DbService.Client
     public class SqlCeSyncProviderProxy : RelationalProviderProxy
     {
         private ISqlCeSyncContract _clientProxy;
-        private RelationalSyncProvider _clientProvider;
+        public RelationalSyncProvider ClientProvider
+        {
+            get; 
+            private set;
+        }
 
         private const string CLIENT_DEFAULT_DATABASE_PATH = @"C:\KaronDB.sdf";
         
@@ -49,7 +53,7 @@ namespace DbService.Client
 
             var clientDatabase = new SqlDatabase { Location = hostName };
 
-            _clientProvider = this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
+            var flag = this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
         }
 
 
