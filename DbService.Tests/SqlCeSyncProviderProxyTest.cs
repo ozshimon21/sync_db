@@ -21,7 +21,8 @@ namespace DbService.Tests
         const string STATION_SCOPE = "StationScope2";
         const string CONNECTION_STRING_SERVER = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
         const string CONNECTION_STRING_CLIENT = @"C:\KaronDB.sdf";
-        const string SQL_CE_SYNC_SERVICE_URI_NET_TCP = "net.tcp://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService/";
+        //const string SQL_CE_SYNC_SERVICE_URI_NET_TCP = "net.tcp://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService/";
+        const string SQL_CE_SYNC_SERVICE_URI_NET_TCP = "net.tcp://localhost:8000/RelationalSyncContract/SqlCeSyncService/";
 
         private SqlConnection _serverConnection;
         private DbSyncScopeDescription _serverScopeDescription;
@@ -53,12 +54,13 @@ namespace DbService.Tests
         {
             try
             {
+
                 _clientProxy = new SqlCeSyncProviderProxy(SQL_CE_SYNC_SERVICE_URI_NET_TCP, STATION_SCOPE);
                 _clientProxy.CreateProxy();
-
+                
                var result =  _clientProxy.NeedsScope();
 
-               if (result == false) return;
+               if (result != false) return;
 
                 var provider = _clientProxy.ClientProvider;
 

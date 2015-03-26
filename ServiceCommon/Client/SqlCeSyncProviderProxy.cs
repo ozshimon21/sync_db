@@ -53,7 +53,8 @@ namespace DbService.Client
 
             var clientDatabase = new SqlDatabase { Location = hostName };
 
-            var flag = this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
+            //var flag =
+                this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
         }
 
 

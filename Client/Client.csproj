@@ -149,10 +149,6 @@
       <Project>{210cffe8-de9a-4c79-8937-3e8a27d409ba}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ServiceCommon\DbService.csproj">
-      <Project>{53ec32e8-04f6-4023-9770-1f6c9baf0d51}</Project>
-      <Name>DbService</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Design Time\" />

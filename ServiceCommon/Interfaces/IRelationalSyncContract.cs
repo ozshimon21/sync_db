@@ -20,7 +20,7 @@ namespace DbService.Interfaces
     {
         
         [OperationContract(IsInitiating=true)]
-        ClientData Initialize(string scopeName, string hostName);
+        void Initialize(string scopeName, string hostName);
 
         [OperationContract]
         void BeginSession(SyncProviderPosition position);
