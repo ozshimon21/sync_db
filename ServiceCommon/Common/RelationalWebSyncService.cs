@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using CommonUtils;
 using DbService.Interfaces;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data;
+using Microsoft.Synchronization.Data.SqlServerCe;
 
 namespace DbService.Common
 {
@@ -20,11 +22,30 @@ namespace DbService.Common
 
         public void Initialize(string scopeName, string hostName)
         {
-            this.peerProvider = this.ConfigureProvider(scopeName, hostName);
-            this.batchIdToFileMapper = new Dictionary<string, string>();
+            try
+            {
+                //var clientDB = new SqlDatabase { Location = hostName };
+                //var path = clientDB.ConnectionString;
+                this.peerProvider = this.ConfigureProvider(scopeName, hostName);
+                this.batchIdToFileMapper = new Dictionary<string, string>();
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+     
 
+//            if (peerProvider is SqlCeSyncProvider)
+//            {
+//                var sqlCe = peerProvider as SqlCeSyncProvider;
+//            }
 
-            //return new ClientData {ClientProvider = peerProvider};
+            //return new ClientData { data = new Client.TempData{m_provider = peerProvider} };
+
+//            return new ClientData { data = new System.Data.DataSet("oz")};
+
+//            return new ClientData {ClientProvider = peerProvider};
 
             //return this.peerProvider != null;
 

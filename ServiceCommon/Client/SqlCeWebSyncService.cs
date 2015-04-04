@@ -19,20 +19,23 @@ namespace DbService.Client
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SqlCeWebSyncService : RelationalWebSyncService, ISqlCeSyncContract
     {
-        SqlCeSyncProvider dbProvider;
+        SqlCeSyncProvider _dbProvider;
 
         #region ISqlSyncContract Members
 
         protected override RelationalSyncProvider ConfigureProvider(string scopeName, string clientStringConn)
         {
-            var helper = new DbServiceClientHandler();
+            var clientConn = new SqlCeConnection(clientStringConn);
 
-            SqlCeConnection clientConn = new SqlCeConnection(clientStringConn);
-            dbProvider = helper.ConfigureCeSyncProvider(scopeName, clientConn);
+            _dbProvider = new SqlCeSyncProvider
+            {
+                ScopeName = scopeName,
+                Connection = clientConn
+            };
 
-            dbProvider.ApplyChangeFailed += dbProvider_ApplyChangeFailed;
+            _dbProvider.ApplyChangeFailed += dbProvider_ApplyChangeFailed;
 
-            return dbProvider;
+            return _dbProvider;
         }
 
         void dbProvider_ApplyChangeFailed(object sender, DbApplyChangeFailedEventArgs e)
@@ -43,8 +46,8 @@ namespace DbService.Client
         public void CreateScopeDescription(DbSyncScopeDescription scopeDescription)
         {
             // create CE provisioning object based on the ProductsScope
-            SqlCeSyncScopeProvisioning clientProvision =
-                    new SqlCeSyncScopeProvisioning(dbProvider.Connection as SqlCeConnection, scopeDescription);
+            var clientProvision =
+                    new SqlCeSyncScopeProvisioning(_dbProvider.Connection as SqlCeConnection, scopeDescription);
 
             try
             {
@@ -62,8 +65,8 @@ namespace DbService.Client
         {
             // create CE provisioning object based on the ProductsScope
 
-            SqlCeSyncScopeDeprovisioning clientDeprovision =
-                    new SqlCeSyncScopeDeprovisioning(dbProvider.Connection as SqlCeConnection);
+            var clientDeprovision =
+                    new SqlCeSyncScopeDeprovisioning(_dbProvider.Connection as SqlCeConnection);
 
             // starts the provisioning process
             //clientDeprovision.DeprovisionScope(scopeName);
@@ -74,7 +77,7 @@ namespace DbService.Client
         {
             Log("GetSchema: {0}", this.peerProvider.Connection.ConnectionString);
 
-            var scopeDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForScope(ScopeName, dbProvider.Connection as SqlCeConnection);
+            var scopeDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForScope(ScopeName, _dbProvider.Connection as SqlCeConnection);
             return scopeDesc;
         }
 
@@ -83,11 +86,11 @@ namespace DbService.Client
             Log("NeedsSchema: {0}", this.peerProvider.Connection.ConnectionString);
 
             SqlCeSyncScopeProvisioning prov = null;
-            if (dbProvider == null || dbProvider.Connection == null) return false;
+            if (_dbProvider == null || _dbProvider.Connection == null) return false;
 
-            prov = new SqlCeSyncScopeProvisioning((SqlCeConnection)dbProvider.Connection);
+            prov = new SqlCeSyncScopeProvisioning((SqlCeConnection)_dbProvider.Connection);
 
-            return !prov.ScopeExists(dbProvider.ScopeName);
+            return !prov.ScopeExists(_dbProvider.ScopeName);
         }
 
         #endregion

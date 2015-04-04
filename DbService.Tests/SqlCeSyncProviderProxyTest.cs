@@ -62,11 +62,11 @@ namespace DbService.Tests
 
                if (result != false) return;
 
-                var provider = _clientProxy.ClientProvider;
+                //var provider = _clientProxy.ClientProvider;
 
 
             }
-            catch (Exception ex)
+             catch (Exception ex)
             {
 
                 Assert.Fail(ex.Message);

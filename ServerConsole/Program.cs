@@ -19,75 +19,92 @@ namespace ServerConsole
     {
         static void Main(string[] args)
         {
-//            SqlCeSyncProviderProxy clientProxy;
-//            const string tableName = "Stations";
-//            const string tableName2 = "Flight";
-//
-//            const string STATIONSCOPE = "StationScope2";
-//            const string CONNECTION_STRING_SERVER = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
-//            const string CONNECTION_STRING_CLIENT = @"C:\KaronDB.sdf";
-//            const string SQL_CE_SYNC_SERVICE_URI = "http://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService/";
-//            const string SQL_CE_SYNC_SERVICE_URI_NET_TCP = "net.tcp://192.168.5.6:8000/RelationalSyncContract/SqlCeSyncService";
-//
-//            
-//
-//            var serverConn = new SqlConnection(CONNECTION_STRING_SERVER);
-//            
-//            var scopeDesc = new DbSyncScopeDescription(STATIONSCOPE);          
-//            var tableDesc = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName, serverConn);
-//            var tableDesc2 = SqlSyncDescriptionBuilder.GetDescriptionForTable(tableName2, serverConn);
-//            scopeDesc.Tables.Add(tableDesc);
-//            scopeDesc.Tables.Add(tableDesc2);
-//
-//
-////            SqlSyncScopeProvisioning serverProvision = new SqlSyncScopeProvisioning(serverConn, scopeDesc);
-////            serverProvision.SetCreateTableDefault(DbSyncCreationOption.Skip);
-////            serverProvision.Apply();
-//
-//            Console.WriteLine("Press any key");
-//            Console.ReadLine();
-//
-//            clientProxy = new SqlCeSyncProviderProxy(SQL_CE_SYNC_SERVICE_URI_NET_TCP, STATIONSCOPE);
-//            clientProxy.CreateProxy();
-//            var result =  clientProxy.NeedsScope();
-//
-//            Console.WriteLine(result);
-//
-////            Console.WriteLine("Create Scope Description if needed - Press any key");
-////            Console.ReadLine();
-////
-////            clientProxy.CreateScopeDescription(scopeDesc);
-////
-////
-////            Console.ReadLine();
-//
-//
-//            var localProvider = new SqlSyncProvider(STATIONSCOPE, serverConn);
-//
-//            var clientDB = new SqlDatabase { Location = CONNECTION_STRING_CLIENT };
-//
-//            var remoteProvider = new SqlCeSyncProvider(STATIONSCOPE,
-//                    new SqlCeConnection(clientDB.ConnectionString));
-//
-//            localProvider.MemoryDataCacheSize = 1;
-//            localProvider.BatchingDirectory = @"C:\SyncBatchFolder";
-//            localProvider.BatchSpooled += localProvider_BatchSpooled;
-//            localProvider.BatchApplied += localProvider_BatchApplied;
-//
-//            remoteProvider.MemoryDataCacheSize = 1;
-//            remoteProvider.BatchingDirectory = @"C:\SyncBatchFolder";
-//            remoteProvider.BatchSpooled += localProvider_BatchSpooled;
-//            remoteProvider.BatchApplied += localProvider_BatchApplied;
-//
-//            var orchestrator = new SyncOrchestrator
-//                                            {
-//                                                    LocalProvider = localProvider,
-//                                                    RemoteProvider = remoteProvider,
-//                                                    Direction = SyncDirectionOrder.Download,
-//                                                   
-//                                            };
-//
-//            SyncOperationStatistics stats = orchestrator.Synchronize();
+            const string TABLE_STATION = "Stations";
+
+            const string SYNC_SCOPE = "Stations";
+            const string CONNECTION_STRING_SERVER = "Data Source=localhost; Initial Catalog=Moked; Integrated Security=True";
+            const string CONNECTION_STRING_CLIENT = @"C:\KaronDB.sdf";
+            const string SQL_CE_SYNC_SERVICE_URI_METADATA = "http://192.168.5.10:8001/RelationalSyncContract/SqlCeSyncService/";
+            const string SQL_CE_SYNC_SERVICE_URI_NET_TCP_REMOTE = "net.tcp://192.168.5.6:8008/RelationalSyncContract/SqlCeSyncService";
+            const string SQL_CE_SYNC_SERVICE_URI_NET_TCP_LOCAL = "net.tcp://localhost:8008/RelationalSyncContract/SqlCeSyncService/";
+
+            Console.WriteLine("Try Connecting Server... {0}", CONNECTION_STRING_SERVER);
+            var serverConnection = new SqlConnection(CONNECTION_STRING_SERVER);
+            serverConnection.Open();          
+            serverConnection.Close();
+            Console.WriteLine("Server Connected Successfuly!");
+
+            Console.WriteLine("Create server provider... for Scope name:{0}", SYNC_SCOPE);
+            var localProvider = new SqlSyncProvider(SYNC_SCOPE, serverConnection)
+            {
+                MemoryDataCacheSize = 1,
+                BatchingDirectory = @"C:\SyncBatchFolder"
+            };
+
+            localProvider.BatchSpooled += localProvider_BatchSpooled;
+            localProvider.BatchApplied += localProvider_BatchApplied;
+
+
+            var scopeDesc = new DbSyncScopeDescription(SYNC_SCOPE);
+            var tableDesc = SqlSyncDescriptionBuilder.GetDescriptionForTable(TABLE_STATION, serverConnection);
+            scopeDesc.Tables.Add(tableDesc);
+
+            Console.WriteLine("Check whether Server scope:[{0}] is exists...",SYNC_SCOPE);
+            var serverProvision = new SqlSyncScopeProvisioning(serverConnection);
+            var isServerScopeExist = serverProvision.ScopeExists(SYNC_SCOPE);
+            Console.WriteLine("Server scope:[{0}] is {1}", SYNC_SCOPE, isServerScopeExist ? "exist" : "is not exist");
+            if (!isServerScopeExist)
+            {
+                Console.WriteLine("start provisioning server with scope:[{0}] ...", SYNC_SCOPE);
+                serverProvision.SetCreateTableDefault(DbSyncCreationOption.Skip);
+                serverProvision.PopulateFromScopeDescription(scopeDesc);
+                serverProvision.Apply();
+            }
+
+            Console.WriteLine("Try connecting client by proxy URI: [{0}]", SQL_CE_SYNC_SERVICE_URI_NET_TCP_LOCAL);
+            var clientProxy = new SqlCeSyncProviderProxy(SQL_CE_SYNC_SERVICE_URI_NET_TCP_LOCAL, SYNC_SCOPE);
+            clientProxy.CreateProxy();
+            Console.WriteLine("Client proxy Connected Successfuly!");
+
+
+            Console.WriteLine("Check whether Client scope:[{0}] is exists...", SYNC_SCOPE);
+            var isClientNeedScope = clientProxy.NeedsScope();
+            Console.WriteLine("Client scope:[{0}] is {1}", SYNC_SCOPE, isServerScopeExist ? "exist" : "is not exist");
+            if (isClientNeedScope)
+            {
+                Console.WriteLine("start provisioning client with scope:[{0}] ...", SYNC_SCOPE);
+
+                Console.WriteLine("Getting scope description from Server:[{0}]", CONNECTION_STRING_SERVER);
+              
+                
+                clientProxy.CreateScopeDescription(scopeDesc);
+            }
+
+            var orchestrator = new SyncOrchestrator
+                                            {
+                                                    LocalProvider = localProvider,
+                                                    RemoteProvider = clientProxy,
+                                                    Direction = SyncDirectionOrder.Download,                                            
+                                            };
+
+            var syncStats = orchestrator.Synchronize();
+
+            // print statistics
+            Console.WriteLine("Start Time: " + syncStats.SyncStartTime);
+            Console.WriteLine(String.Empty);
+            Console.WriteLine("Download Changes Applied: " + syncStats.DownloadChangesApplied);
+            Console.WriteLine("Download Changes Failed: " + syncStats.DownloadChangesFailed);
+            Console.WriteLine("Download Changes Total: " + syncStats.DownloadChangesTotal);
+            Console.WriteLine(String.Empty);
+            Console.WriteLine("Upload Changes Applied: " + syncStats.UploadChangesApplied);
+            Console.WriteLine("Upload Changes Failed: " + syncStats.UploadChangesFailed);
+            Console.WriteLine("Upload Changes Total: " + syncStats.UploadChangesTotal);
+            Console.WriteLine(String.Empty);
+            Console.WriteLine("Complete Time: " + syncStats.SyncEndTime);
+            Console.WriteLine(String.Empty);
+
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
 
         }
 

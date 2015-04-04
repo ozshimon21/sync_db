@@ -47,7 +47,7 @@ namespace DbService.Server
 
 
             //create anew scope description and add the appropriate tables to this scope
-            var scopeDesc = new DbSyncScopeDescription(SyncUtils.ScopeName);
+            var scopeDesc = new DbSyncScopeDescription(scopeName/*SyncUtils.ScopeName*/);
 
             //class to be used to provision the scope defined above
             var serverConfig = new SqlSyncScopeProvisioning((SqlConnection)provider.Connection);

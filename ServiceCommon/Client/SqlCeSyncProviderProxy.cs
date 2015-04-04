@@ -3,6 +3,7 @@ using System.ServiceModel;
 using CommonUtils;
 using DbService.Common;
 using DbService.Interfaces;
+using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data;
 
 namespace DbService.Client
@@ -10,11 +11,6 @@ namespace DbService.Client
     public class SqlCeSyncProviderProxy : RelationalProviderProxy
     {
         private ISqlCeSyncContract _clientProxy;
-        public RelationalSyncProvider ClientProvider
-        {
-            get; 
-            private set;
-        }
 
         private const string CLIENT_DEFAULT_DATABASE_PATH = @"C:\KaronDB.sdf";
         
@@ -52,9 +48,9 @@ namespace DbService.Client
 
 
             var clientDatabase = new SqlDatabase { Location = hostName };
+            var conn = clientDatabase.ConnectionString;
+            this.proxy.Initialize(scopeName, conn );
 
-            //var flag =
-                this.proxy.Initialize(scopeName, clientDatabase.ConnectionString);
         }
 
 

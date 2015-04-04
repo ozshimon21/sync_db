@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using DbService.Client;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data;
 
@@ -8,14 +9,14 @@ namespace DbService.Interfaces
 
 {
     [ServiceContract(SessionMode=SessionMode.Required)]
-    //[ServiceKnownType(typeof(SyncIdFormatGroup))]
+    [ServiceKnownType(typeof(SyncIdFormatGroup))]
     [ServiceKnownType(typeof(DbSyncContext))]
     [ServiceKnownType(typeof(SyncSchema))]
     [ServiceKnownType(typeof(WebSyncFaultException))]
     [ServiceKnownType(typeof(SyncBatchParameters))]
     [ServiceKnownType(typeof(GetChangesParameters))]
     [ServiceKnownType(typeof(RelationalSyncProvider))]
-    [ServiceKnownType(typeof(ClientData))]
+    //[ServiceKnownType(typeof(ClientData))]
     public interface IRelationalSyncContract
     {
         
@@ -50,12 +51,21 @@ namespace DbService.Interfaces
         void Cleanup();
     }
 
-    [DataContract]
-    public class ClientData
-    {
-        [DataMember]
-        public RelationalSyncProvider ClientProvider;
-    }
+//    [KnownType(typeof(TempData))]
+//    [DataContract]
+//    public class ClientData
+//    {
+//        [DataMember]
+//        public TempData data;
+//    }
+//
+//    [DataContract]
+//    [KnownType(typeof(KnowledgeSyncProvider))]
+//    public class ClientData
+//    {
+//        [DataMember]
+//        public KnowledgeSyncProvider ClientProvider;
+//    }
 
     [DataContract]
     public class SyncBatchParameters

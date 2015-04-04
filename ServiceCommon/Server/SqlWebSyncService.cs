@@ -1,6 +1,5 @@
 ﻿using System.Data.SqlClient;
 using System.ServiceModel;
-using CommonUtils;
 using DbService.Common;
 using DbService.Interfaces;
 using Microsoft.Synchronization.Data;
@@ -32,7 +31,7 @@ namespace DbService.Server
         {
             Log("GetSchema: {0}", this.peerProvider.Connection.ConnectionString);
 
-            DbSyncScopeDescription scopeDesc = SqlSyncDescriptionBuilder.GetDescriptionForScope(SyncUtils.ScopeName, (SqlConnection)this.dbProvider.Connection);
+            DbSyncScopeDescription scopeDesc = SqlSyncDescriptionBuilder.GetDescriptionForScope("321"/*SyncUtils.ScopeName*/, (SqlConnection)this.dbProvider.Connection);
             return scopeDesc;
         }
 
