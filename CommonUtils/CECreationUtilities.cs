@@ -65,6 +65,10 @@ namespace CommonUtils
                 {
                     connection = new SqlCeConnection(String.Format(@"DataSource='{0}'; Password='{1}'", dbLocation,string.Empty));
                 } 
+
+
+
+
                 return connection;
             }
         }
